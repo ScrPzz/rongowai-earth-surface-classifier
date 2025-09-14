@@ -63,3 +63,4 @@ geo-k-compression_model/catboost_info/learn_error.tsv
 geo-k-compression_model/catboost_info/time_left.tsv
 
 geo-k-compression_model/catboost_info/learn/events.out.tfevents
+tabnet_binary_classifier_gpu.zip/network.pt
