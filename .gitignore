@@ -46,6 +46,8 @@ articoli/Komjathy, GPS Signal Scattering from Sea Surface..pdf
 *.txt
 *.csv
 *.pkl
+*.zip
+*.pth
 *.pptx
 binary_classification_ensembled_experiment
 *.png
@@ -64,3 +66,5 @@ geo-k-compression_model/catboost_info/time_left.tsv
 
 geo-k-compression_model/catboost_info/learn/events.out.tfevents
 tabnet_binary_classifier_gpu.zip/network.pt
+tabnet_binary_raw_counts_peak.zip.zip
+mlflow_gitlab_test (1).ipynb
