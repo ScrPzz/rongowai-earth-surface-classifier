@@ -47,7 +47,6 @@ articoli/Komjathy, GPS Signal Scattering from Sea Surface..pdf
 *.csv
 *.pkl
 *.zip
-*.pth
 *.pptx
 binary_classification_ensembled_experiment
 *.png
