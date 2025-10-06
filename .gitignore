@@ -38,6 +38,7 @@ articoli/Komjathy, GPS Signal Scattering from Sea Surface..pdf
 *.shp
 *.shx
 *.dbf
+*.onnx
 .xlsx
 *.prj
 *.cpg
