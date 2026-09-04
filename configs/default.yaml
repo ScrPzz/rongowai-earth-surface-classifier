@@ -1,0 +1,24 @@
+# Paths: data_dir holds the L1 NetCDF files (override with RONGOWAI_DATA_DIR);
+# work_dir (relative to the repository root) receives data/ and results/.
+data_dir: /media/atogni/dati/rongowai/data
+work_dir: .
+
+quality:
+  copol_gain_min_dbi: 5.0
+  xpol_gain_min_dbi: 5.0
+  slant_range_min_m: 2000.0
+  slant_range_max_m: 10000.0
+  snr_min_db: 0.0
+  apply_snr_filter: false
+
+sampling:
+  max_reflections_per_flight: 300   # 600 DDMs per flight (both polarizations)
+  seed: 42
+
+split:
+  temporal_holdout_months: 6
+  n_folds: 5
+  seed: 42
+
+features:
+  peak_region_pixels: 40

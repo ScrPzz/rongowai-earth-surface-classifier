@@ -1,0 +1,40 @@
+{
+  "n_files": 7324,
+  "n_dropped_invalid_airport": 31,
+  "n_flights": 7293,
+  "skipped_filenames": [],
+  "unknown_airports": [],
+  "date_min": "2022-10-26 10:04:50",
+  "date_max": "2026-05-23 06:04:12",
+  "temporal_cutoff": "2025-11-24 06:04:12",
+  "total_bytes": 1198013353050,
+  "split_counts": {
+    "train": 3550,
+    "geo_holdout": 2726,
+    "time_holdout": 557,
+    "geo_time_holdout": 460
+  },
+  "island_counts": {
+    "north-north": 4107,
+    "north-south": 1280,
+    "south-north": 1276,
+    "south-south": 630
+  },
+  "top_routes": {
+    "NZWN-NZNS": 436,
+    "NZNS-NZWN": 430,
+    "NZGS-NZAA": 277,
+    "NZAA-NZGS": 271,
+    "NZAA-NZKK": 254,
+    "NZKK-NZAA": 251,
+    "NZAA-NZWR": 218,
+    "NZWR-NZAA": 215,
+    "NZAA-NZWB": 207,
+    "NZWB-NZWN": 203,
+    "NZNS-NZCH": 202,
+    "NZWB-NZAA": 202,
+    "NZWN-NZWB": 197,
+    "NZCH-NZNS": 186,
+    "NZWN-NZTG": 180
+  }
+}

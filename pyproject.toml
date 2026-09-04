@@ -1,0 +1,59 @@
+[project]
+name = "rongowai-ddm"
+version = "0.1.0"
+description = "Land/water classification from Rongowai GNSS-R Delay-Doppler Maps: ETL, feature extraction, model selection and training"
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+authors = [{ name = "Alessandro Togni" }]
+dependencies = [
+    "numpy>=1.26",
+    "pandas>=2.1",
+    "pyarrow>=15",
+    "scipy>=1.11",
+    "scikit-learn>=1.4",
+    "xgboost>=2.1",
+    "lightgbm>=4.3",
+    "netCDF4>=1.6",
+    "matplotlib>=3.8",
+    "tqdm>=4.66",
+    "joblib>=1.3",
+    "optuna>=3.6",
+    "pyyaml>=6",
+    "torch>=2.4",
+    "pytorch-tabnet>=4.1",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8", "ruff>=0.5"]
+notebooks = ["jupyter", "ipykernel"]
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.uv]
+# torch is pulled from the CUDA 12.8 index; swap the index for a CPU-only build if needed.
+constraint-dependencies = ["torch==2.11.0"]
+
+[[tool.uv.index]]
+name = "pytorch-cu128"
+url = "https://download.pytorch.org/whl/cu128"
+explicit = true
+
+[tool.uv.sources]
+torch = { index = "pytorch-cu128" }
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "W", "UP", "B"]
+ignore = ["E501"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
