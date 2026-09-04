@@ -2,7 +2,7 @@
 # Sequential chain: one GPU job at a time (the GPU is shared with another training run).
 cd /home/atogni/Scrivania/progetti/rongowai-rework
 export PYTHONUNBUFFERED=1
-while pgrep -f "[.]venv/bin/python scripts/" > /dev/null; do sleep 15; done
+while pgrep -f "^[.]venv/bin/python scripts/" > /dev/null; do sleep 15; done
 run() {
   local name=$1; shift
   echo "=== $(date '+%H:%M:%S') start $name $* ==="

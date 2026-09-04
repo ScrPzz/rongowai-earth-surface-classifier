@@ -157,9 +157,81 @@ minutes rather than hours.
 
 <!-- MODEL_SELECTION -->
 
-<!-- ABLATION -->
+### Which features matter
 
-<!-- TUNING -->
+One fixed model (XGBoost, default hyper-parameters, 600 trees) is trained on
+each feature set: five flight-grouped folds on a 500,000-row subsample of the
+train pool (CV AUC), and once on the whole train pool to score the geographic
+and the temporal holdout. Rows marked "default" use the four DDM-only groups
+plus the polarimetric one; "default + latent" adds the 20-D code of an
+autoencoder trained on the raw pixels (`09`).
+
+| feature set | features | CV AUC | geo AUC | time AUC |
+|---|---:|---:|---:|---:|
+| raw pixels | 200 | 0.8865 | 0.9083 | 0.8723 |
+| global | 45 | 0.8859 | 0.9061 | 0.8704 |
+| peak | 49 | 0.8719 | 0.8971 | 0.8584 |
+| coherence | 16 | 0.8707 | 0.8956 | 0.8558 |
+| power | 4 | 0.8428 | 0.8769 | 0.8608 |
+| quadrant | 16 | 0.8690 | 0.8903 | 0.8613 |
+| polarimetric | 7 | 0.9257 | 0.9555 | 0.9174 |
+| meta | 6 | 0.9223 | 0.9061 | 0.9364 |
+| DDM set (global+peak+coherence+power) | 114 | 0.9085 | 0.9225 | 0.9019 |
+| default (DDM set + polarimetric) | 121 | 0.9613 | 0.9698 | 0.9592 |
+| default + quadrant | 137 | 0.9614 | 0.9700 | 0.9595 |
+| default + raw pixels | 321 | 0.9611 | 0.9701 | 0.9596 |
+| default + meta | 127 | 0.9822 | 0.9744 | 0.9821 |
+| default - global | 76 | 0.9588 | 0.9679 | 0.9567 |
+| default - peak | 72 | 0.9614 | 0.9698 | 0.9588 |
+| default - coherence | 105 | 0.9611 | 0.9696 | 0.9590 |
+| default - power | 117 | 0.9537 | 0.9685 | 0.9461 |
+| default - polarimetric | 114 | 0.9085 | 0.9225 | 0.9019 |
+| default - delay position | 106 | 0.9594 | 0.9684 | 0.9570 |
+
+![Feature-set ablation](results/figures/feature_ablation.png)
+
+Four findings, in decreasing order of size:
+
+1. **The polarimetric pair is the strongest signal in the data.** Seven
+   features computed from the LHCP/RHCP twin DDMs reach an AUC of 0.926 on
+   their own, more than the 200 raw pixels (0.887) or any shape group, and
+   adding them to the DDM-only set moves the AUC from 0.909 to 0.961. The
+   dual-polarization receiver is what makes the problem tractable at this
+   accuracy.
+2. **Absolute power is the second lever.** Removing the four `power` features
+   costs 0.008 AUC in cross-validation and 0.013 on the temporal holdout;
+   the shape of a DDM says less than the shape plus how strong it is.
+3. **The elaborate groups are redundant.** The 49 peak-region features and the
+   16 coherence observables score around 0.87 alone, but removing either from
+   the default set changes nothing; the quadrant statistics and the raw pixels
+   add nothing either. The information they carry is already in the global
+   statistics, the power and the polarimetric ratios.
+4. **Metadata helps, but it is a prior, not a measurement.** Receiver SNR,
+   incidence angle, antenna gains, slant range and aircraft altitude add
+   0.02 AUC in cross-validation and on the temporal holdout, and 0.005 on the
+   geographic one. Altitude and range encode the phase of the flight, and
+   airports are on land: the gain is real and would hold in production, but it
+   is knowledge about where the aircraft is rather than about the surface. The
+   final models therefore use the DDM-derived default set, and the metadata
+   variant is reported as an option.
+
+The delay position of the peak, which the adversarial validation flagged as
+the main difference between the train pool and the South Island, is worth
+0.002 AUC in and out of distribution: keeping it is right.
+
+### Tuning
+
+XGBoost was tuned with Optuna over depth, learning rate, child weight,
+sub-sampling, column sampling, the three regularisation terms and the number
+of trees (69 trials, 52 complete and 16 pruned, each scored on three
+flight-grouped folds of a 400,000-row subsample). The optimum is a flat
+plateau: the ten best trials sit between 0.9624 and 0.9627 CV AUC, against
+0.9613 for the default parameters, with depth 9–11, learning rate 0.03–0.05
+and 1,000–1,500 trees. TabNet was tuned on one flight-grouped split (train on
+folds 1–3, early stopping on fold 4, score on fold 0) over width, number of
+steps, sparsity, learning rate and batch size.
+
+<!-- TUNING_TABNET -->
 
 <!-- FINAL -->
 

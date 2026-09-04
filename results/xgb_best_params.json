@@ -1,0 +1,24 @@
+{
+  "best_params": {
+    "max_depth": 11,
+    "learning_rate": 0.03329784770854382,
+    "min_child_weight": 2.865591110677631,
+    "subsample": 0.982710734358891,
+    "colsample_bytree": 0.6172668732658652,
+    "colsample_bynode": 0.633138293599144,
+    "gamma": 0.0119279064298135,
+    "reg_alpha": 6.728471054647987,
+    "reg_lambda": 0.15796357953242107,
+    "n_estimators": 1069
+  },
+  "best_cv_auc": 0.9627053931687649,
+  "n_trials": 69,
+  "n_rows": 400000,
+  "groups": [
+    "global",
+    "peak",
+    "coherence",
+    "power",
+    "polarimetric"
+  ]
+}
