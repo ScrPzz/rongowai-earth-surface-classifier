@@ -1,0 +1,13 @@
+{
+  "n_rows": 500000,
+  "summary": {
+    "by flight": {
+      "roc_auc": 0.9613088130637355,
+      "avg_precision": 0.957455177182595
+    },
+    "random rows": {
+      "roc_auc": 0.962353755852989,
+      "avg_precision": 0.9590556798064318
+    }
+  }
+}

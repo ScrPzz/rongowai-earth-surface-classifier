@@ -2,170 +2,19 @@
   "n_rows_cv": 500000,
   "n_estimators": 600,
   "sets": {
-    "raw pixels": {
+    "latent": {
       "groups": [
-        "raw"
+        "latent"
       ]
     },
-    "global": {
-      "groups": [
-        "global"
-      ]
-    },
-    "peak": {
-      "groups": [
-        "peak"
-      ]
-    },
-    "coherence": {
-      "groups": [
-        "coherence"
-      ]
-    },
-    "power": {
-      "groups": [
-        "power"
-      ]
-    },
-    "polarimetric": {
-      "groups": [
-        "polarimetric"
-      ]
-    },
-    "quadrant": {
-      "groups": [
-        "quadrant"
-      ]
-    },
-    "meta": {
-      "groups": [
-        "meta"
-      ]
-    },
-    "global+peak": {
-      "groups": [
-        "global",
-        "peak"
-      ]
-    },
-    "global+peak+coherence": {
-      "groups": [
-        "global",
-        "peak",
-        "coherence"
-      ]
-    },
-    "DDM set (global+peak+coherence+power)": {
-      "groups": [
-        "global",
-        "peak",
-        "coherence",
-        "power"
-      ]
-    },
-    "default (DDM set + polarimetric)": {
-      "groups": [
-        "global",
-        "peak",
-        "coherence",
-        "power",
-        "polarimetric"
-      ]
-    },
-    "default + quadrant": {
+    "default + latent": {
       "groups": [
         "global",
         "peak",
         "coherence",
         "power",
         "polarimetric",
-        "quadrant"
-      ]
-    },
-    "default + meta": {
-      "groups": [
-        "global",
-        "peak",
-        "coherence",
-        "power",
-        "polarimetric",
-        "meta"
-      ]
-    },
-    "default + raw pixels": {
-      "groups": [
-        "global",
-        "peak",
-        "coherence",
-        "power",
-        "polarimetric",
-        "raw"
-      ]
-    },
-    "default - global": {
-      "groups": [
-        "peak",
-        "coherence",
-        "power",
-        "polarimetric"
-      ]
-    },
-    "default - peak": {
-      "groups": [
-        "global",
-        "coherence",
-        "power",
-        "polarimetric"
-      ]
-    },
-    "default - coherence": {
-      "groups": [
-        "global",
-        "peak",
-        "power",
-        "polarimetric"
-      ]
-    },
-    "default - power": {
-      "groups": [
-        "global",
-        "peak",
-        "coherence",
-        "polarimetric"
-      ]
-    },
-    "default - polarimetric": {
-      "groups": [
-        "global",
-        "peak",
-        "coherence",
-        "power"
-      ]
-    },
-    "default - delay position": {
-      "groups": [
-        "global",
-        "peak",
-        "coherence",
-        "power",
-        "polarimetric"
-      ],
-      "exclude": [
-        "peak_delay",
-        "com_delay",
-        "peak_centroid_delay",
-        "peak_rel_pos_delay",
-        "peak_dist_to_center",
-        "band0_sum",
-        "band0_max",
-        "band1_sum",
-        "band1_max",
-        "band2_sum",
-        "band2_max",
-        "band3_sum",
-        "band3_max",
-        "band4_sum",
-        "band4_max"
+        "latent"
       ]
     }
   }

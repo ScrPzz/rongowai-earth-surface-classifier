@@ -21,16 +21,23 @@ Single entry point to resume the rework. Read this first.
 - Docs: `docs/DESIGN.md` (requirements + decisions), `docs/FEATURES.md` (feature catalogue), executed notebook `notebooks/01_one_flight_end_to_end.ipynb`.
 - README: sections on data, pipeline, splits, adversarial validation, features, ablation and tuning are written; placeholders remain (see below).
 
-## Running when the session was paused
+## Stopped when the session was paused (relaunch first)
 
-`results/run_chain2.sh` (nohup, sequential) was executing `03_model_selection.py`, to be followed by `07_train_final.py` and `08_make_figures.py`. Check `results/log_chain2.log`; a `=== chain done ===` line means everything finished. If the machine was shut down before that, rerun what is missing, one at a time (the GPU is shared with another training job; the scripts fall back to the CPU when GPU memory is short):
+The sequential chain was interrupted at the author's request while
+`03_model_selection.py` was running; `07_train_final.py` and
+`08_make_figures.py` never ran. Everything before them (ETL, adversarial
+validation, ablation, both tunings, autoencoder, leakage demo) is complete on
+disk. Relaunch the three remaining steps with one command (they run one at a
+time; the GPU is shared with another training job and the scripts fall back to
+the CPU when GPU memory is short):
 
 ```bash
 cd ~/Scrivania/progetti/rongowai-rework
-.venv/bin/python scripts/03_model_selection.py --n-rows 300000   # -> results/model_selection.csv
-.venv/bin/python scripts/07_train_final.py                       # -> results/final/{metrics.json,predictions.parquet,...}
-.venv/bin/python scripts/08_make_figures.py                      # -> results/figures/*.png, results/tables.md
+nohup bash results/run_chain3.sh > results/log_chain3.log 2>&1 &
+tail -f results/log_chain3.log      # "=== chain done ===" marks the end (about 1.5 h)
 ```
+
+Outputs to expect: `results/model_selection.csv`, `results/final/{metrics.json,predictions.parquet,breakdown_xgb.csv,calibration.csv,importance_*.csv,per_flight_geo_xgb.csv,xgboost.json,tabnet.zip}`, `results/figures/*.png`, `results/tables.md`.
 
 ## Numbers so far (flight-grouped validation, default feature set = global+peak+coherence+power+polarimetric, 121 features)
 
@@ -47,6 +54,7 @@ cd ~/Scrivania/progetti/rongowai-rework
 
 ## To do, in order
 
+0. **Relaunch `results/run_chain3.sh`** (see above) and wait for `=== chain done ===`.
 1. Verify the chain outputs: `results/model_selection.csv`, `results/final/metrics.json`, `results/final/breakdown_xgb.csv`, `results/final/calibration.csv`, `results/figures/`, `results/tables.md`.
 2. Fill the README placeholders: `<!-- RESULTS_SUMMARY -->`, `<!-- FEATURE_FIGURES -->`, `<!-- MODEL_SELECTION -->`, `<!-- TUNING_TABNET -->`, `<!-- FINAL -->`; add the two latent rows to the ablation table; embed the figures.
 3. Write Part 2 of the blog post (screening, ablation, final holdout metrics, breakdowns by SNR / polarization / surface class / coast distance, calibration, the leakage demo, limitations) and copy the figures it references into the post folder (`ddm_gallery.png`, `peak_region_water.png`, `feature_distributions.png` and the result figures).

@@ -1,0 +1,22 @@
+{
+  "best_params": {
+    "n_d": 64,
+    "n_steps": 4,
+    "gamma": 1.8,
+    "lambda_sparse": 6.954771451368797e-06,
+    "mask_type": "entmax",
+    "lr": 0.039861000483519274,
+    "batch_size": 1024,
+    "n_a": 64
+  },
+  "best_auc": 0.9611358992505538,
+  "n_trials": 16,
+  "n_rows": 300000,
+  "groups": [
+    "global",
+    "peak",
+    "coherence",
+    "power",
+    "polarimetric"
+  ]
+}
