@@ -97,14 +97,37 @@ made at the flight level:
 - **train pool**: the rest, cut into five folds by flight (stratified on the
   per-flight land fraction). Fold 0 is the validation fold of the final models.
 
-<!-- SPLIT_TABLE -->
+| split | flights | DDM rows | what it tests |
+|---|---:|---:|---|
+| train pool (5 folds) | 3,550 | 2,115,000 | in-distribution skill, model selection, tuning |
+| geographic holdout | 2,726 | 1,619,888 | a region never seen in training (South Island) |
+| temporal holdout | 557 | 332,400 | the last six months |
+| combined holdout | 460 | 272,400 | both at once |
 
-Adversarial validation (`02`) makes the design explicit: a classifier trained
-to tell train flights from geographic-holdout flights from metadata alone is
-almost perfect, and the single most useful variable is the **file size**,
-because South-Island routes are short. File size, route, coordinates and
-distance to the coast are stored with every sample for analysis and are never
-features.
+Before sampling, the corpus holds 177.3 M reflections, of which 89.0 M pass the
+quality filters (30.8 % water, 69.2 % land); the table above keeps 4.34 M DDMs
+from 7,233 flights (60 flights had no valid reflection).
+
+Adversarial validation (`02`) makes the design explicit. A classifier is
+trained to tell two pools apart; an AUC near 0.5 means the pools are
+exchangeable, an AUC near 1 means they are trivially different.
+
+| level | pools | AUC | most useful variables |
+|---|---|---:|---|
+| flight metadata | train vs geographic holdout | 1.000 | airport codes, **file size** |
+| flight metadata | train vs temporal holdout | 0.696 | hour of day, file size, airports |
+| DDM features | fold 0 vs the other train folds | 0.544 | none stands out |
+| DDM features | train vs geographic holdout | 0.730 | delay-band energy, delay centroid, polarimetric excess ratio |
+| DDM features | train vs temporal holdout | 0.774 | spectral median of the waveform, peak-region connectivity |
+
+The folds are exchangeable, as they should be. The holdouts are different by
+construction at the flight level, and the file size alone gives away the
+island, because South-Island routes are short: file size, route, coordinates
+and distance to the coast are stored with every sample for analysis and are
+never features. At the feature level the drift is real but moderate: the
+geographic holdout differs mostly in *where* the peak sits in delay (a geometry
+effect), the temporal holdout in the waveform's spectral content (a sensor or
+processing effect). Both are the kind of shift a deployed model would meet.
 
 ## Feature extraction
 

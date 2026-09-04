@@ -1,0 +1,285 @@
+{
+  "flight_level": {
+    "train_vs_geo_holdout": {
+      "mean_auc": 0.9999969045039467,
+      "std_auc": 6.1909921064806646e-06,
+      "n_a": 3550,
+      "n_b": 2726,
+      "verdict": "severe shift",
+      "top_features": [
+        {
+          "feature": "origin_code",
+          "importance": 0.3408682942390442
+        },
+        {
+          "feature": "file_size_log",
+          "importance": 0.32836928963661194
+        },
+        {
+          "feature": "dest_code",
+          "importance": 0.30568007826805116
+        },
+        {
+          "feature": "hour",
+          "importance": 0.015792801417410372
+        },
+        {
+          "feature": "month",
+          "importance": 0.004766524257138372
+        },
+        {
+          "feature": "day_of_year",
+          "importance": 0.004523024661466479
+        }
+      ],
+      "features": [
+        "month",
+        "day_of_year",
+        "hour",
+        "origin_code",
+        "dest_code",
+        "file_size_log"
+      ]
+    },
+    "train_vs_time_holdout": {
+      "mean_auc": 0.6963560416553375,
+      "std_auc": 0.022773600204710333,
+      "n_a": 3550,
+      "n_b": 557,
+      "verdict": "strong shift",
+      "top_features": [
+        {
+          "feature": "hour",
+          "importance": 0.25791692137718203
+        },
+        {
+          "feature": "file_size_log",
+          "importance": 0.2526683658361435
+        },
+        {
+          "feature": "origin_code",
+          "importance": 0.24956631064414977
+        },
+        {
+          "feature": "dest_code",
+          "importance": 0.23984840214252473
+        }
+      ],
+      "features": [
+        "hour",
+        "origin_code",
+        "dest_code",
+        "file_size_log"
+      ]
+    }
+  },
+  "sample_level": {
+    "fold0_vs_other_folds": {
+      "mean_auc": 0.5436831556874999,
+      "std_auc": 0.0016022434626838354,
+      "n_a": 200000,
+      "n_b": 200000,
+      "verdict": "indistinguishable",
+      "top_features": [
+        {
+          "feature": "vn_entropy",
+          "importance": 0.016299708932638168
+        },
+        {
+          "feature": "peak_pdist_max",
+          "importance": 0.013678273186087608
+        },
+        {
+          "feature": "raw_sum_log10",
+          "importance": 0.012795796245336532
+        },
+        {
+          "feature": "band0_max",
+          "importance": 0.01227282416075468
+        },
+        {
+          "feature": "peak_centroid_delay",
+          "importance": 0.011615763418376446
+        },
+        {
+          "feature": "peak_cluster_coeff",
+          "importance": 0.0111926537938416
+        },
+        {
+          "feature": "shannon_entropy",
+          "importance": 0.010566127859055996
+        },
+        {
+          "feature": "count_snr_db",
+          "importance": 0.01054892037063837
+        },
+        {
+          "feature": "pol_entropy_diff",
+          "importance": 0.01045575998723507
+        },
+        {
+          "feature": "raw_peak_log10",
+          "importance": 0.010217899270355702
+        },
+        {
+          "feature": "peak_excess_db",
+          "importance": 0.010107401572167874
+        },
+        {
+          "feature": "gini",
+          "importance": 0.010013494547456503
+        },
+        {
+          "feature": "peak_pdist_var",
+          "importance": 0.009745353739708662
+        },
+        {
+          "feature": "p25",
+          "importance": 0.009472235105931759
+        },
+        {
+          "feature": "is_lhcp",
+          "importance": 0.009391950629651546
+        }
+      ]
+    },
+    "train_vs_geo_holdout": {
+      "mean_auc": 0.7304870155625001,
+      "std_auc": 0.001519287031143135,
+      "n_a": 200000,
+      "n_b": 200000,
+      "verdict": "strong shift",
+      "top_features": [
+        {
+          "feature": "band1_max",
+          "importance": 0.07369062304496765
+        },
+        {
+          "feature": "com_delay",
+          "importance": 0.04309664070606232
+        },
+        {
+          "feature": "pol_excess_ratio_db",
+          "importance": 0.02602568082511425
+        },
+        {
+          "feature": "peak_rel_pos_delay",
+          "importance": 0.02008957788348198
+        },
+        {
+          "feature": "peak_int_max",
+          "importance": 0.019909872487187386
+        },
+        {
+          "feature": "pol_snr_diff_db",
+          "importance": 0.019216136634349824
+        },
+        {
+          "feature": "p10",
+          "importance": 0.01866297423839569
+        },
+        {
+          "feature": "peak_delay",
+          "importance": 0.017587899416685104
+        },
+        {
+          "feature": "max",
+          "importance": 0.0175317345187068
+        },
+        {
+          "feature": "raw_sum_log10",
+          "importance": 0.017281795293092726
+        },
+        {
+          "feature": "is_lhcp",
+          "importance": 0.017239413037896157
+        },
+        {
+          "feature": "raw_peak_log10",
+          "importance": 0.01665311921387911
+        },
+        {
+          "feature": "peak_dist_to_center",
+          "importance": 0.01588814426213503
+        },
+        {
+          "feature": "pol_shape_corr",
+          "importance": 0.015696609392762184
+        },
+        {
+          "feature": "peak_centroid_delay",
+          "importance": 0.015506271086633206
+        }
+      ]
+    },
+    "train_vs_time_holdout": {
+      "mean_auc": 0.7740940738125,
+      "std_auc": 0.001792562984902182,
+      "n_a": 200000,
+      "n_b": 200000,
+      "verdict": "strong shift",
+      "top_features": [
+        {
+          "feature": "wf_fft_median",
+          "importance": 0.2672075927257538
+        },
+        {
+          "feature": "peak_cluster_coeff",
+          "importance": 0.09648652747273445
+        },
+        {
+          "feature": "peak_bbox_w",
+          "importance": 0.06880783662199974
+        },
+        {
+          "feature": "peak_connectivity_8",
+          "importance": 0.05039831548929215
+        },
+        {
+          "feature": "vn_entropy",
+          "importance": 0.032077249512076376
+        },
+        {
+          "feature": "min",
+          "importance": 0.031993305683135985
+        },
+        {
+          "feature": "peak_mu02",
+          "importance": 0.028788666427135467
+        },
+        {
+          "feature": "peak_pdist_max",
+          "importance": 0.02701463147532195
+        },
+        {
+          "feature": "wf_autocorr_lag1",
+          "importance": 0.025473541766405105
+        },
+        {
+          "feature": "peak_spread_total",
+          "importance": 0.024443283351138233
+        },
+        {
+          "feature": "p75",
+          "importance": 0.01909019984304905
+        },
+        {
+          "feature": "peak_spread_doppler",
+          "importance": 0.014080751314759254
+        },
+        {
+          "feature": "peak_background_contrast",
+          "importance": 0.012985592521727086
+        },
+        {
+          "feature": "band4_max",
+          "importance": 0.012745880149304866
+        },
+        {
+          "feature": "skew",
+          "importance": 0.009982519410550594
+        }
+      ]
+    }
+  }
+}
