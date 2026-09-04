@@ -8,6 +8,7 @@ from collections.abc import Callable
 import numpy as np
 import pandas as pd
 
+from ..models.xgb import fit_with_fallback
 from .metrics import binary_metrics
 
 
@@ -38,9 +39,9 @@ def run_grouped_cv(
             va_fold = fold_ids[(int(np.flatnonzero(fold_ids == k)[0]) + 1) % len(fold_ids)]
             va = folds == va_fold
             tr = tr & ~va
-            model.fit(X[tr], y[tr], X[va], y[va])
+            fit_with_fallback(model, X[tr], y[tr], X[va], y[va])
         else:
-            model.fit(X[tr], y[tr])
+            fit_with_fallback(model, X[tr], y[tr])
         p = model.predict_proba(X[te])[:, 1]
         oof[te] = p
         m = binary_metrics(y[te], p, threshold)

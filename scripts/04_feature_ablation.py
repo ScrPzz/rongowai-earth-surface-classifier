@@ -20,13 +20,17 @@ from rongowai_ddm.data.splits import SPLIT_GEO, SPLIT_TIME, SPLIT_TRAIN
 from rongowai_ddm.evaluation.cv import run_grouped_cv
 from rongowai_ddm.evaluation.metrics import binary_metrics
 from rongowai_ddm.features.registry import DDM_GROUPS, FEATURE_GROUPS
-from rongowai_ddm.models.xgb import make_xgb
+from rongowai_ddm.models.xgb import fit_with_fallback, make_xgb
 
 DEFAULT = list(DDM_GROUPS) + ["polarimetric"]
 # Features that encode where the peak sits along delay (a geometry effect flagged by the adversarial validation).
-DELAY_POSITION_FEATURES = ["peak_delay", "com_delay", "peak_centroid_delay", "peak_rel_pos_delay", "peak_dist_to_center"] + [
-    f"band{i}_{s}" for i in range(5) for s in ("sum", "max")
-]
+DELAY_POSITION_FEATURES = [
+    "peak_delay",
+    "com_delay",
+    "peak_centroid_delay",
+    "peak_rel_pos_delay",
+    "peak_dist_to_center",
+] + [f"band{i}_{s}" for i in range(5) for s in ("sum", "max")]
 LATENT_KEYS = ["flight_idx", "epoch", "channel"]
 
 FEATURE_SETS: dict[str, dict] = {
@@ -71,8 +75,14 @@ def main() -> None:
     parser.add_argument("--n-estimators", type=int, default=600)
     parser.add_argument("--device", default="cuda")
     parser.add_argument("--sets", nargs="+", default=None, help="subset of feature-set names")
-    parser.add_argument("--latent", type=Path, default=None, help="latent parquet from 09_train_autoencoder.py")
-    parser.add_argument("--append", action="store_true", help="append to results/feature_ablation.csv instead of overwriting")
+    parser.add_argument(
+        "--latent", type=Path, default=None, help="latent parquet from 09_train_autoencoder.py"
+    )
+    parser.add_argument(
+        "--append",
+        action="store_true",
+        help="append to results/feature_ablation.csv instead of overwriting",
+    )
     args = parser.parse_args()
     cfg = load_config(args)
     sets = {k: v for k, v in FEATURE_SETS.items() if (args.sets is None or k in args.sets)}
@@ -92,7 +102,9 @@ def main() -> None:
     geo = df[df["split"] == SPLIT_GEO].reset_index(drop=True)
     tim = df[df["split"] == SPLIT_TIME].reset_index(drop=True)
     train_cv = subsample(train, args.n_rows, cfg.split.seed)
-    print(f"train {len(train):,} rows (CV on {len(train_cv):,}), geo holdout {len(geo):,}, time holdout {len(tim):,}")
+    print(
+        f"train {len(train):,} rows (CV on {len(train_cv):,}), geo holdout {len(geo):,}, time holdout {len(tim):,}"
+    )
 
     out_path = cfg.results_dir / "feature_ablation.csv"
     rows = pd.read_csv(out_path).to_dict("records") if (args.append and out_path.exists()) else []
@@ -101,7 +113,9 @@ def main() -> None:
         Xcv, feats = build_matrix(train_cv, spec)
         ycv = train_cv["label"].to_numpy(dtype=int)
         _, folds_df = run_grouped_cv(
-            lambda: make_xgb(device=args.device, n_estimators=args.n_estimators, seed=cfg.split.seed),
+            lambda: make_xgb(
+                device=args.device, n_estimators=args.n_estimators, seed=cfg.split.seed
+            ),
             Xcv,
             ycv,
             train_cv["fold_id"].to_numpy(),
@@ -109,10 +123,11 @@ def main() -> None:
         )
         Xtr, _ = build_matrix(train, spec)
         model = make_xgb(device=args.device, n_estimators=args.n_estimators, seed=cfg.split.seed)
-        model.fit(Xtr, train["label"].to_numpy(dtype=int))
+        fit_with_fallback(model, Xtr, train["label"].to_numpy(dtype=int))
         out = {
             "feature_set": name,
-            "groups": "+".join(spec["groups"]) + (" - " + ",".join(spec["exclude"]) if spec.get("exclude") else ""),
+            "groups": "+".join(spec["groups"])
+            + (" - " + ",".join(spec["exclude"]) if spec.get("exclude") else ""),
             "n_features": len(feats),
             "cv_auc": folds_df["roc_auc"].mean(),
             "cv_auc_std": folds_df["roc_auc"].std(),
@@ -121,7 +136,9 @@ def main() -> None:
         }
         for split_name, part in (("geo", geo), ("time", tim)):
             Xh, _ = build_matrix(part, spec)
-            m = binary_metrics(part["label"].to_numpy(dtype=int), model.predict_proba(Xh)[:, 1], 0.5)
+            m = binary_metrics(
+                part["label"].to_numpy(dtype=int), model.predict_proba(Xh)[:, 1], 0.5
+            )
             out[f"{split_name}_auc"] = m["roc_auc"]
             out[f"{split_name}_ap"] = m["avg_precision"]
             out[f"{split_name}_f1"] = m["f1"]
@@ -132,7 +149,10 @@ def main() -> None:
             flush=True,
         )
         pd.DataFrame(rows).to_csv(out_path, index=False)
-    save_json({"n_rows_cv": int(len(train_cv)), "n_estimators": args.n_estimators, "sets": sets}, cfg.results_dir / "feature_ablation_meta.json")
+    save_json(
+        {"n_rows_cv": int(len(train_cv)), "n_estimators": args.n_estimators, "sets": sets},
+        cfg.results_dir / "feature_ablation_meta.json",
+    )
 
 
 if __name__ == "__main__":

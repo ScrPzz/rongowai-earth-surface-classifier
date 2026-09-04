@@ -9,6 +9,8 @@ import torch
 from sklearn.impute import SimpleImputer
 from sklearn.preprocessing import StandardScaler
 
+from .xgb import is_oom, resolve_device
+
 TABNET_DEFAULT_PARAMS: dict = {
     "n_d": 64,
     "n_a": 64,
@@ -35,7 +37,7 @@ class TabNetModel:
     ) -> None:
         self.params = dict(TABNET_DEFAULT_PARAMS)
         self.params.update(params or {})
-        self.device = device if torch.cuda.is_available() else "cpu"
+        self.device = resolve_device(device) if torch.cuda.is_available() else "cpu"
         self.max_epochs = max_epochs
         self.patience = patience
         self.seed = seed
@@ -54,6 +56,17 @@ class TabNetModel:
         return X.astype(np.float32)
 
     def fit(self, X, y, X_val=None, y_val=None) -> TabNetModel:
+        try:
+            return self._fit(X, y, X_val, y_val)
+        except Exception as exc:  # noqa: BLE001
+            if not is_oom(exc) or self.device == "cpu":
+                raise
+            print("[tabnet] GPU out of memory; training on CPU", flush=True)
+            torch.cuda.empty_cache()
+            self.device = "cpu"
+            return self._fit(X, y, X_val, y_val)
+
+    def _fit(self, X, y, X_val=None, y_val=None) -> TabNetModel:
         from pytorch_tabnet.tab_model import TabNetClassifier
 
         p = dict(self.params)

@@ -6,7 +6,7 @@ import numpy as np
 from sklearn.metrics import roc_auc_score
 from sklearn.model_selection import StratifiedKFold
 
-from ..models.xgb import make_xgb
+from ..models.xgb import fit_with_fallback, make_xgb
 
 
 def adversarial_validation(
@@ -34,7 +34,7 @@ def adversarial_validation(
         model = make_xgb(
             {"max_depth": 5, "learning_rate": 0.1}, device=device, n_estimators=200, seed=seed
         )
-        model.fit(X[tr], y[tr])
+        fit_with_fallback(model, X[tr], y[tr])
         aucs.append(float(roc_auc_score(y[va], model.predict_proba(X[va])[:, 1])))
         imp += model.feature_importances_
     imp /= n_splits

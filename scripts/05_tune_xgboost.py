@@ -16,7 +16,7 @@ from sklearn.metrics import roc_auc_score
 from rongowai_ddm.data.dataset import feature_matrix, load_samples, subsample
 from rongowai_ddm.data.splits import SPLIT_TRAIN
 from rongowai_ddm.features.registry import DDM_GROUPS
-from rongowai_ddm.models.xgb import make_xgb, suggest_xgb_params
+from rongowai_ddm.models.xgb import fit_with_fallback, make_xgb, suggest_xgb_params
 
 DEFAULT_GROUPS = DDM_GROUPS + ("polarimetric",)
 
@@ -56,7 +56,7 @@ def main() -> None:
             model = make_xgb(
                 params, device=args.device, n_estimators=n_estimators, seed=cfg.split.seed
             )
-            model.fit(X[~te], y[~te])
+            fit_with_fallback(model, X[~te], y[~te])
             aucs.append(roc_auc_score(y[te], model.predict_proba(X[te])[:, 1]))
             trial.report(float(np.mean(aucs)), step)
             if trial.should_prune():

@@ -2,8 +2,56 @@
 
 from __future__ import annotations
 
+import subprocess
+
 import numpy as np
 import xgboost as xgb
+
+MIN_FREE_GPU_GB = 1.5
+
+
+def gpu_free_gb() -> float | None:
+    """Free GPU memory in GB from nvidia-smi (no CUDA context is created); ``None`` without a GPU."""
+    try:
+        out = (
+            subprocess.run(
+                ["nvidia-smi", "--query-gpu=memory.free", "--format=csv,noheader,nounits"],
+                capture_output=True,
+                text=True,
+                timeout=10,
+                check=True,
+            )
+            .stdout.strip()
+            .splitlines()[0]
+        )
+        return float(out) / 1024.0
+    except Exception:  # noqa: BLE001
+        return None
+
+
+def resolve_device(requested: str = "cuda", min_free_gb: float = MIN_FREE_GPU_GB) -> str:
+    """Use the GPU only when enough memory is free (the GPU may be shared with other jobs)."""
+    if requested != "cuda":
+        return requested
+    free = gpu_free_gb()
+    return "cuda" if free is not None and free >= min_free_gb else "cpu"
+
+
+def is_oom(exc: BaseException) -> bool:
+    return "out of memory" in str(exc).lower() or "bad_alloc" in str(exc).lower()
+
+
+def fit_with_fallback(model, *args, **kwargs):
+    """Fit; on a GPU out-of-memory error, refit the same model on the CPU."""
+    try:
+        return model.fit(*args, **kwargs)
+    except Exception as exc:  # noqa: BLE001
+        if not is_oom(exc) or not hasattr(model, "set_params"):
+            raise
+        print("[xgb] GPU out of memory; refitting on CPU", flush=True)
+        model.set_params(device="cpu")
+        return model.fit(*args, **kwargs)
+
 
 XGB_DEFAULT_PARAMS: dict = {
     "max_depth": 8,
@@ -33,7 +81,7 @@ def make_xgb(
         objective="binary:logistic",
         eval_metric="logloss",
         tree_method="hist",
-        device=device,
+        device=resolve_device(device),
         random_state=seed,
         early_stopping_rounds=early_stopping_rounds,
         verbosity=0,
@@ -53,7 +101,7 @@ def fit_xgb(
 ) -> xgb.XGBClassifier:
     """Fit with early stopping on ``(X_val, y_val)``; ``model.best_iteration`` holds the stopping round."""
     model = make_xgb(params, device, n_estimators, seed, early_stopping_rounds)
-    model.fit(X_tr, y_tr, eval_set=[(X_val, y_val)], verbose=False)
+    fit_with_fallback(model, X_tr, y_tr, eval_set=[(X_val, y_val)], verbose=False)
     return model
 
 
