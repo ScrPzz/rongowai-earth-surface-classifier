@@ -4,15 +4,12 @@ from __future__ import annotations
 
 from pathlib import Path
 
-import matplotlib
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+from sklearn.metrics import precision_recall_curve, roc_curve
 
-matplotlib.use("Agg")
-import matplotlib.pyplot as plt  # noqa: E402
-from sklearn.metrics import precision_recall_curve, roc_curve  # noqa: E402
-
-from ..models.calibration import reliability_table  # noqa: E402
+from ..models.calibration import reliability_table
 
 COLORS = {
     "water": "#2a6f97",
